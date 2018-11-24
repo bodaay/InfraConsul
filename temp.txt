@@ -1,0 +1,16 @@
+Hello
+
+This is Khalefa Al-Ahmad, from Ministry of interior in Qatar.
+
+We are interested in buying Fox pick and place, and have a look at Spider as well.
+
+If there is any event coming soon that the machine will be displayed please do inform us, otherwise we would be happy to visit your headquarters, look at the machines in action, so we can decide on option we would like to include
+
+Most probably, we will go with Fox only, but with dispensing of solder paste option, I want to see the machine capability to dispense for QFN (0.5mm) packages, BGA 0.8mm pitch, and it would be great if the machine capable of doing BGA 0.4mm
+
+As for pick and place, smallest package we have is 0402, again, would be great if the machine capable of doing 0201
+
+If a demo is possible within company HQ, lets arrange a visit somewhere between 1st of December to 5th. 
+
+Thanks
+Khalefa
