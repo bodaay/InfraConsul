@@ -33,7 +33,10 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = DEMO_BOX_NAME
-
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.cpus = "2"
+  end
   config.vm.define "consul01" do |consul01|
     consul01.vm.hostname = "consul01"
     # Forward Consul web and api port 8500
@@ -93,7 +96,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "vault01" do |vault01|
     vault01.vm.hostname = "vault01"
     # Forward Vault web and api port 8200
-    vault01.vm.network "forwarded_port", guest: 8200, host: 8516
+    vault01.vm.network "forwarded_port", guest: 8200, host: 8216
     # n6.ssh.username = "root"
     # n6.ssh.password = "P@ssw0rd"
     # n6.ssh.keys_only = false
@@ -104,7 +107,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "vault02" do |vault02|
     vault02.vm.hostname = "vault02"
     # Forward Vault web and api port 8200
-    vault02.vm.network "forwarded_port", guest: 8200, host: 8517
+    vault02.vm.network "forwarded_port", guest: 8200, host: 8217
     # n7.ssh.username = "root"
     # n7.ssh.password = "P@ssw0rd"
     # n7.ssh.keys_only = false
@@ -115,7 +118,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "vault03" do |vault03|
     vault03.vm.hostname = "n8"
     # Forward Vault web and api port 8200
-    vault03.vm.network "forwarded_port", guest: 8200, host: 8518
+    vault03.vm.network "forwarded_port", guest: 8200, host: 8218
     # n8.ssh.username = "root"
     # n8.ssh.password = "P@ssw0rd"
     # n8.ssh.keys_only = false
