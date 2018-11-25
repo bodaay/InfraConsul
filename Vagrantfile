@@ -34,76 +34,92 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = DEMO_BOX_NAME
 
-  config.vm.define "n1" do |n1|
-      n1.vm.hostname = "n1"
+  config.vm.define "consul01" do |consul01|
+    consul01.vm.hostname = "consul01"
+    # Forward Consul web and api port 8500
+    consul01.vm.network "forwarded_port", guest: 8500, host: 8511
       # n1.ssh.username = "root"
       # n1.ssh.password = "P@ssw0rd"
       # n1.ssh.keys_only = false
     #   n1.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-      n1.vm.network "private_network", ip: "172.20.20.11"
+    consul01.vm.network "private_network", ip: "172.20.20.11"
   end
 
-  config.vm.define "n2" do |n2|
-      n2.vm.hostname = "n2"
+  config.vm.define "consul02" do |consul02|
+    consul02.vm.hostname = "consul02"
+    # Forward Consul web and api port 8500
+    consul02.vm.network "forwarded_port", guest: 8500, host: 8512
       # n2.ssh.username = "root"
       # n2.ssh.password = "P@ssw0rd"
       # n2.ssh.keys_only = false
     #   n2.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-      n2.vm.network "private_network", ip: "172.20.20.12"
+    consul02.vm.network "private_network", ip: "172.20.20.12"
   end
   
-  config.vm.define "n3" do |n3|
-      n3.vm.hostname = "n3"
+  config.vm.define "consul03" do |consul03|
+    consul03.vm.hostname = "consul03"
+    # Forward Consul web and api port 8500
+    consul03.vm.network "forwarded_port", guest: 8500, host: 8513
       # n3.ssh.username = "root"
       # n3.ssh.password = "P@ssw0rd"
       # n3.ssh.keys_only = false
     #   n3.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-      n3.vm.network "private_network", ip: "172.20.20.13"
+    consul03.vm.network "private_network", ip: "172.20.20.13"
   end
 
-  config.vm.define "n4" do |n4|
-      n4.vm.hostname = "n4"
+  config.vm.define "consul04" do |consul04|
+    consul04.vm.hostname = "consul04"
+    # Forward Consul web and api port 8500
+    consul04.vm.network "forwarded_port", guest: 8500, host: 8514
       # n4.ssh.username = "root"
       # n4.ssh.password = "P@ssw0rd"
       # n4.ssh.keys_only = false
     #   n4.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-      n4.vm.network "private_network", ip: "172.20.20.14"
+    consul04.vm.network "private_network", ip: "172.20.20.14"
   end
 
 
-  config.vm.define "n5" do |n5|
-      n5.vm.hostname = "n5"
+  config.vm.define "consul05" do |consul05|
+    consul05.vm.hostname = "consul05"
+    # Forward Consul web and api port 8500
+    consul05.vm.network "forwarded_port", guest: 8500, host: 8515
       # n5.ssh.username = "root"
       # n5.ssh.password = "P@ssw0rd"
       # n5.ssh.keys_only = false
     #   n5.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-      n5.vm.network "private_network", ip: "172.20.20.15"
+    consul05.vm.network "private_network", ip: "172.20.20.15"
   end
 
-  config.vm.define "n6" do |n6|
-    n6.vm.hostname = "n6"
+  config.vm.define "vault01" do |vault01|
+    vault01.vm.hostname = "vault01"
+    # Forward Vault web and api port 8200
+    vault01.vm.network "forwarded_port", guest: 8200, host: 8516
     # n6.ssh.username = "root"
     # n6.ssh.password = "P@ssw0rd"
     # n6.ssh.keys_only = false
     # n6.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-    n6.vm.network "private_network", ip: "172.20.20.16"
+    vault01.vm.network "private_network", ip: "172.20.20.16"
   end
 
-  config.vm.define "n7" do |n7|
-    n7.vm.hostname = "n7"
+  config.vm.define "vault02" do |vault02|
+    vault02.vm.hostname = "vault02"
+    # Forward Vault web and api port 8200
+    vault02.vm.network "forwarded_port", guest: 8200, host: 8517
     # n7.ssh.username = "root"
     # n7.ssh.password = "P@ssw0rd"
     # n7.ssh.keys_only = false
     # n7.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-    n7.vm.network "private_network", ip: "172.20.20.17"
+    vault02.vm.network "private_network", ip: "172.20.20.17"
   end
   
-  config.vm.define "n8" do |n8|
-    n8.vm.hostname = "n8"
+  config.vm.define "vault03" do |vault03|
+    vault03.vm.hostname = "n8"
+    # Forward Vault web and api port 8200
+    vault03.vm.network "forwarded_port", guest: 8200, host: 8518
     # n8.ssh.username = "root"
     # n8.ssh.password = "P@ssw0rd"
     # n8.ssh.keys_only = false
     # n8.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
-    n8.vm.network "private_network", ip: "172.20.20.18"
+    vault03.vm.network "private_network", ip: "172.20.20.18"
   end
 end
