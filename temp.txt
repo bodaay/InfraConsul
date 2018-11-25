@@ -14,3 +14,45 @@ If a demo is possible within company HQ, lets arrange a visit somewhere between 
 
 Thanks
 Khalefa
+
+
+
+
+SON_STRING=$(jshon -s '{"name":"khalefa"}' 2>/dev/null)
+curl -X POST -d $JSON_STRING http://127.0.0.1:8500/v1/acl/update/$DEFAULT_TOKEN_NAME?token=$MASTER_TOKEN_NAME
+
+
+curl \
+    --request PUT \
+    --data \
+'{
+  "Name": "DefaultAgentToken",
+  "Rules": "{\"node\":{\"\":{\"policy\":\"read\"},\"service_prefix\":{\"\":{\"policy\":\"read\"},\"key_rexec\":{\"\":{\"policy\":\"read\"}"
+}' http://127.0.0.1:8500/v1/acl/policy?token=<management token>
+
+curl \
+    --request PUT \
+    --data \
+'{
+  "Name": "DefaultAgentToken",
+  "Rules": "node \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" } key \"foo/private/\" { policy = \"deny\" } operator = \"read\""
+}' http://127.0.0.1:8500/v1/acl/policy?token=<token with ACL "write">
+
+curl \
+    --request PUT \
+    --data \
+'{
+  "Name": "DefaultAgentToken",
+  "Rules": "node \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" } key_rexec \"\" { policy = \"read\" }"
+}' http://127.0.0.1:8500/v1/acl/policy?token=khalefa
+
+
+
+
+curl \
+    --request PUT \
+    --data \
+'{
+  "Name": "DefaultAgentToken",
+  "Rules": "node \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" } key_rexec \"\" { policy = \"read\" }"
+}' http://127.0.0.1:8500/v1/acl/update/3b4533d0-633c-4489-85c5-c21a2fe76ae6?token=khalefa

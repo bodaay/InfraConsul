@@ -2,8 +2,9 @@
 # you can always generate new key if you want using: consul keygen
 ENCRYPTION_KEY="9hQ23lBrz96EAlbeddSsUQ=="
 NETWORK_INTERFACE="enp0s8"
+MASTER_TOKEN_NAME="khalefa"
 sudo apt-get update
-sudo apt-get install -y unzip curl jq dnsutils
+sudo apt-get install -y unzip curl jq dnsutils uuid
 echo "Determining Consul version to install ..."
 CHECKPOINT_URL="https://checkpoint-api.hashicorp.com/v1/check"
 if [ -z "$CONSUL_DEMO_VERSION" ]; then
@@ -26,6 +27,7 @@ complete -C /usr/local/bin/consul consul
 sudo mkdir --parents /opt/consul
 sudo chown --recursive consul:consul /opt/consul
 echo "Creating Consul Service File..."
+sudo systemctl stop consul
 cat << EOM | sudo tee /etc/systemd/system/consul.service
 [Unit]
 Description="HashiCorp Consul - A service mesh solution"
@@ -56,10 +58,29 @@ bootstrap_expect = 5
 performance {
   raft_multiplier = 1
 }
+connect = {
+  enabled = true
+}
+acl = {
+  enabled = true
+  default_policy = "deny"
+  down_policy = "extend-cache"
+  tokens = {
+    master = "$MASTER_TOKEN_NAME"
+    default = "This_Shit_Will_Be_Replaced"
+  }
+}
 enable_syslog = true
 bind_addr = "{{ GetInterfaceIP \"$NETWORK_INTERFACE\" }}"
 retry_join = ["172.20.20.11","172.20.20.12","172.20.20.13","172.20.20.14","172.20.20.15"]
 EOM
 sudo systemctl enable consul
 sudo systemctl daemon-reload
-sudo systemctl stop consul
+sudo systemctl restart consul
+echo "Sleeping for 10 seconds"
+sleep 10
+DEFAULT_TOKEN_NAME=$(curl -s  --request PUT   --data '{
+  "Name": "DefaultAgentToken",
+  "Rules": "node \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" } key_rexec \"\" { policy = \"read\" }"
+}' http://127.0.0.1:8500/v1/acl/create?token=$MASTER_TOKEN_NAME | jq .ID | tr -d '"')
+sudo sed -i "s/default = \"This_Shit_Will_Be_Replaced\"/default = \"$DEFAULT_TOKEN_NAME\"/g" /etc/consul.d/consul.hcl
