@@ -1,0 +1,53 @@
+So far this is what I've included
+
+First Stage:
+
+I need to create a python script to do the first initialization
+
+This script should be able to reset even existing installation
+
+The script should load a config file, if no config file provided, it will ask couple of questions and generate the config file
+
+some of the question I have in my mind
+
+- Name of the datacenter
+
+- Number of Consul Nodes Requried, should be multiple choice of 1,3 or 5
+
+- Number of Vault Servers Required, Should be choice of 0,2 or 3
+
+- it will ask for the name of network interface (optional)
+
+- it will ask for each ip for each node
+
+After All questions, a "nodes.config.json" file will be generated
+
+
+Second Stage:
+
+The script will do the following
+
+- It will first login into each server and stop any consul/vault service running
+
+- it will generate a unique key,using consul binary, for gosip protocol
+
+- it will send consul binary to each node, make folders, fix permissions, create user consul, etc..
+
+- it will generate service file
+
+- it will generate the default config.hcl file for consul servers nodes
+
+
+- By Default, Connect, ACL will be enabled in the config file, but we are not setting any Master or Agent Token
+  We will use Consul API to do these
+  for ACL, all servers will have default policy of "deny", and extend-cache
+
+- Start Each node Consul Server, so the first bootstrap can run, starting servers should be in sequence
+
+- it will run on the first node: consul acl bootstrap > Master.Token
+  This command we can only run it one time after the initial bootstrap.
+  We cannot re-run this command unless restart all init process all over
+  we are saving the in Master.Token file, so we can copy the file to the host system doing the confiuration
+  (We have to decide later if we are going to keep this file in safe place, or we are deleting it, no idea yet)
+  READ: https://www.consul.io/docs/guides/acl.html
+- 
