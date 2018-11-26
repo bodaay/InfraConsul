@@ -176,8 +176,11 @@ for datacenter in config:
         node.ExecCommand(config_hcl, True)
         node.ExecCommand(Create_Service_Command, True)
         if n['DNS_PORT_53']:
+            print(
+                "DNS on port 53 for node \"%s\" selected, disabling systemd-resolved service" % n['hostname'])
             node.ExecCommand("systemctl stop systemd-resolved", True)
             node.ExecCommand("systemctl disable systemd-resolved", True)
+
             node.ExecCommand(
                 "setcap 'cap_net_bind_service=+ep' /usr/local/bin/consul", True)
             node.ExecCommand("systemctl disable systemd-resolved", True)
