@@ -2,6 +2,8 @@
 from classes.node import node
 import json
 import os
+import time
+import copy
 consulBinary = "/home/khalefa/Github/InfraConsul/automation/binaries/consul"
 vaultBinary = "/home/khalefa/Github/InfraConsul/automation/binaries/vault"
 
@@ -41,13 +43,14 @@ server = @@@IS_SERVER@@@
 connect = {
   enabled = true
 }
+@@@PRIMARY_DATACENTER_NAME@@@
 acl = {
   enabled = true
   default_policy = "deny"
   down_policy = "extend-cache"
-  
+
 }
-retry_join = ["172.20.20.11","172.20.20.12","172.20.20.13","172.20.20.14","172.20.20.15"]
+@@@RETRY_JOIN@@@
 @@@LOG_LEVEL@@@
 enable_syslog = true
 bind_addr = "{{ GetInterfaceIP \\"@@@INTERFACE@@@\\" }}"
@@ -59,12 +62,36 @@ config = None
 with open("nodes.config.json") as f:
     config = json.loads(f.read())
 
+
 if config is None:
     print("kiss my ass")
     exit(1)
 
+
+UpDateConfigFileWhenFinished = False
+
+for datacenter in config:
+    if datacenter['gosip_encryption_key'] == "":
+        print("No Consul Gosip Key specified for datacenters %s, generating new one" %
+              datacenter['datacenter_name'])
+        datacenter['gosip_encryption_key'] = os.popen(
+            consulBinary + " keygen").read().strip()
+        UpDateConfigFileWhenFinished = True
+
+# make a copy of the original config, we need this later for re-wrting nodes.config.json
+# we have to do this now, before we start adding extra shit into original config variable
+
+config_backUp = copy.deepcopy(config)
+
+
+primaryDataCenterIsSet = False
+primary_dc_name = ""
 for datacenter in config:
     dc_name = datacenter['datacenter_name']
+    print("Datancenter Named: %s will be assumed to be the master datacenter" % dc_name)
+    if not primaryDataCenterIsSet:
+        primary_dc_name = dc_name
+        primaryDataCenterIsSet = True
     dc_domain = datacenter['domain']
     dc_gosip_encryption_key = datacenter['gosip_encryption_key']
     totalConsul = len(datacenter['consul_nodes'])
@@ -72,6 +99,11 @@ for datacenter in config:
         print("Invalid number of consul nodes, minimum 3, recommened 5")
         exit(1)
     consul_nodes = datacenter['consul_nodes']
+    # create retry join string array
+    retry_join_string = ""
+    for cn in consul_nodes:
+        retry_join_string += '"' + cn['ip_address'] + '"' + ", "
+    retry_join_string = retry_join_string[:-2]
     for n in consul_nodes:
         newNode = None
         if n['ssh_password']:
@@ -80,9 +112,12 @@ for datacenter in config:
         elif n['ssh_keyfile']:
             newNode = node(n['ip_address'], n['ssh_port'],
                            n['ssh_username'], keyfile=n['ssh_keyfile'])
+        print("Testing Connection Node: %s" % n['hostname'])
         if newNode:
             if newNode.Connect():
                 n['node_client'] = newNode
+                print('Stopping Consul Service on node: %s' % n['hostname'])
+                newNode.ExecCommand("service consul stop", True)
                 # print(n['node_client'])
                 # print(newNode.ExecCommand("apt update", True))
                 # exit(0)
@@ -95,6 +130,7 @@ for datacenter in config:
         # we have to create a real config.hcl string now
         # make a copy of the original string
         config_hcl = str(Create_Consul_Server_Config_File)
+
         config_hcl = config_hcl.replace(
             "@@@DATACENTER_NAME@@@", dc_name)
         config_hcl = config_hcl.replace(
@@ -119,6 +155,8 @@ for datacenter in config:
             recurosrs_string = recurosrs_string[:-2]
             config_hcl = config_hcl.replace(
                 "@@@RECURSORS@@@", "recursors=[%s]" % recurosrs_string)
+            config_hcl = config_hcl.replace(
+                "@@@RETRY_JOIN@@@", "retry_join=[%s]" % retry_join_string)
         else:
             config_hcl = config_hcl.replace(
                 "@@@IS_SERVER@@@", "false")
@@ -128,6 +166,8 @@ for datacenter in config:
                 "@@@PERFORMANCE@@@", "")
             config_hcl = config_hcl.replace(
                 "@@@RECURSORS@@@", "")
+            config_hcl = config_hcl.replace(
+                "@@@RETRY_JOIN@@@", "")
         if n['LogLevel']:
             config_hcl = config_hcl.replace(
                 "@@@LOG_LEVEL@@@", "log_level=\"%s\"" % n['LogLevel'])
@@ -135,6 +175,8 @@ for datacenter in config:
             config_hcl = config_hcl.replace(
                 "@@@LOG_LEVEL@@@", "")
 
+        config_hcl = config_hcl.replace(
+            "@@@PRIMARY_DATACENTER_NAME@@@", "primary_datacenter=\"%s\"" % primary_dc_name)
         config_hcl = config_hcl.replace(
             "@@@INTERFACE@@@", n['ethernet_interface_name'])
         if n['DNS_PORT_53']:
@@ -189,9 +231,31 @@ for datacenter in config:
             node.ExecCommand("systemctl enable systemd-resolved", True)
         node.ExecCommand("systemctl enable consul", True)
         node.ExecCommand("systemctl daemon-reload", True)
-        node.ExecCommand("systemctl stop consul", True)
+        node.ExecCommand("service consul stop", True)
         if RequiresReboot:
             print("Node %s going to reboot now" % n['hostname'])
             node.ExecCommand("reboot", True)
-        else:
-            node.ExecCommand("systemctl start consul", True)
+
+    for n in consul_nodes:
+        node = n['node_client']
+        print('Starting Consul Service on node: %s' % n['hostname'])
+        node.ExecCommand("service consul start", True)
+    print("Sleeping for 5 seconds")
+    time.sleep(5)
+    print("running ACT bootstrap on first server node")
+    for n in consul_nodes:
+        if n['Server']:
+            node = n['node_client']
+            result = node.ExecCommand(
+                "consul acl bootstrap | tee Master.Token")
+            with open('Master.token', 'w') as the_file:
+                the_file.writelines(result['out'])
+                print("Saved Master.Token locally")
+            print(''.join(result['out']))
+            print("Saved on node: %s file Master.Token" % n['hostname'])
+            break
+
+if UpDateConfigFileWhenFinished:
+    print("updating original nodes.config.json with updated configurations")
+    with open('nodes.new.config.json', 'w') as the_file:
+        the_file.write(json.dumps(config_backUp, indent=2))

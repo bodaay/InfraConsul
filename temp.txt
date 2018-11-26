@@ -56,3 +56,7 @@ curl \
   "Name": "DefaultAgentToken",
   "Rules": "node \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" } key_rexec \"\" { policy = \"read\" }"
 }' http://127.0.0.1:8500/v1/acl/update/3b4533d0-633c-4489-85c5-c21a2fe76ae6?token=khalefa
+
+
+
+retry_join = ["172.20.20.11","172.20.20.12","172.20.20.13","172.20.20.14","172.20.20.15"]

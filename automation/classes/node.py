@@ -44,13 +44,14 @@ class node:
                 return True
             return False
 
-    def ExecCommand(self, command, RequiresRoot=False):
+    def ExecCommand(self, command, RequiresRoot=False, timeout=10):
         if not self.__isconnected:
             if not self.Connect():
                 return None
         if RequiresRoot:
             com = "sudo -S -p '' %s" % command
-            stdin, stdout, stderr = self.__sshclient.exec_command(com)
+            stdin, stdout, stderr = self.__sshclient.exec_command(
+                com, timeout=timeout)
             # if we are connected using password, we have to pass the password, other wise no need if connected using keyfile
             if self.__connectedUsingPassword:
                 stdin.write(self.password + "\n")
@@ -60,7 +61,7 @@ class node:
                     'retval': stdout.channel.recv_exit_status()}
         else:
             stdin, stdout, stderr = self.__sshclient.exec_command(
-                command)
+                command, timeout=timeout)
             return {'out': stdout.readlines(),
                     'err': stderr.readlines(),
                     'retval': stdout.channel.recv_exit_status()}
