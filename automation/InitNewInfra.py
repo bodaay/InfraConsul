@@ -147,7 +147,7 @@ for datacenter in config:
         # print(config_hcl)
         RequiresReboot = False
         node.SendFile(consulBinary, "consul")
-        print("Succesfully Copied Consul Binary to node:%s" % n['hostname'])
+        print("Succesfully Coppied Consul Binary to node:%s " % n['hostname'])
         node.ExecCommand("apt install -y unzip curl jq dnsutils uuid", True)
         result = node.ExecCommand("hostname")
         if result['out'][0].strip() != n['hostname']:
