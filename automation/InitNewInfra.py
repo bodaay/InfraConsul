@@ -257,5 +257,6 @@ for datacenter in config:
 
 if UpDateConfigFileWhenFinished:
     print("updating original nodes.config.json with updated configurations")
-    with open('nodes.new.config.json', 'w') as the_file:
+    os.rename('nodes.config.json', 'nodes.config.json.old')
+    with open('nodes.config.json', 'w') as the_file:
         the_file.write(json.dumps(config_backUp, indent=2))
