@@ -2,7 +2,9 @@
     "datacenter_name": "dc1",
     "gosip_encryption_key": "",
     "domain": "consul",
-    "datacenter_default_dns_resolvers": ["192.168.100.1"],
+    "datacenter_default_dns_resolvers": [
+        "192.168.100.1"
+    ],
     "consul_nodes": [{
             "hostname": "consul01",
             "ssh_port": "22",
@@ -41,7 +43,8 @@
             "ssh_username": "vagrant",
             "ssh_password": null,
             "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul03/virtualbox/private_key"
-        }, {
+        },
+        {
             "hostname": "consul04",
             "ssh_port": "22",
             "UI": true,

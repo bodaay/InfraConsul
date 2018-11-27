@@ -4,6 +4,7 @@ import json
 import os
 import time
 import copy
+import uuid
 consulBinary = "/home/khalefa/Github/InfraConsul/automation/binaries/consul"
 vaultBinary = "/home/khalefa/Github/InfraConsul/automation/binaries/vault"
 
@@ -45,12 +46,15 @@ connect = {
 }
 @@@PRIMARY_DATACENTER_NAME@@@
 acl = {
-  enabled = true
+  #@@@ACL_ENABLE@@@
   default_policy = "deny"
   down_policy = "extend-cache"
-
+  tokens = {
+      agent_master = "@@@AGENT_MASTER@@@"
+  }
+  
 }
-@@@RETRY_JOIN@@@
+
 @@@LOG_LEVEL@@@
 enable_syslog = true
 bind_addr = "{{ GetInterfaceIP \\"@@@INTERFACE@@@\\" }}"
@@ -100,10 +104,14 @@ for datacenter in config:
         exit(1)
     consul_nodes = datacenter['consul_nodes']
     # create retry join string array
-    retry_join_string = ""
+    # retry_join_string = ""
+    # for cn in consul_nodes:
+    #     retry_join_string += '"' + cn['ip_address'] + '"' + ", "
+    # Create joing ips strings
+    join_string = ""
     for cn in consul_nodes:
-        retry_join_string += '"' + cn['ip_address'] + '"' + ", "
-    retry_join_string = retry_join_string[:-2]
+        join_string += cn['ip_address'] + " "
+
     for n in consul_nodes:
         newNode = None
         if n['ssh_password']:
@@ -155,8 +163,8 @@ for datacenter in config:
             recurosrs_string = recurosrs_string[:-2]
             config_hcl = config_hcl.replace(
                 "@@@RECURSORS@@@", "recursors=[%s]" % recurosrs_string)
-            config_hcl = config_hcl.replace(
-                "@@@RETRY_JOIN@@@", "retry_join=[%s]" % retry_join_string)
+            # config_hcl = config_hcl.replace(
+            #     "@@@RETRY_JOIN@@@", "retry_join=[%s]" % retry_join_string)
         else:
             config_hcl = config_hcl.replace(
                 "@@@IS_SERVER@@@", "false")
@@ -174,7 +182,8 @@ for datacenter in config:
         else:
             config_hcl = config_hcl.replace(
                 "@@@LOG_LEVEL@@@", "")
-
+        config_hcl = config_hcl.replace(
+            "@@@AGENT_MASTER@@@", str(uuid.uuid4()))
         config_hcl = config_hcl.replace(
             "@@@PRIMARY_DATACENTER_NAME@@@", "primary_datacenter=\"%s\"" % primary_dc_name)
         config_hcl = config_hcl.replace(
@@ -187,6 +196,7 @@ for datacenter in config:
                 "@@@PORTS_CONFIG@@@", "")
         # End OF Generating Config.hcl string
         # print(config_hcl)
+        n['config_hcl_command'] = config_hcl
         RequiresReboot = False
         node.SendFile(consulBinary, "consul")
         print("Succesfully Coppied Consul Binary to node:%s " % n['hostname'])
@@ -234,14 +244,29 @@ for datacenter in config:
         node.ExecCommand("service consul stop", True)
         if RequiresReboot:
             print("Node %s going to reboot now" % n['hostname'])
-            node.ExecCommand("reboot", True)
 
     for n in consul_nodes:
         node = n['node_client']
         print('Starting Consul Service on node: %s' % n['hostname'])
         node.ExecCommand("service consul start", True)
-    print("Sleeping for 5 seconds")
-    time.sleep(5)
+    print("Sleeping for 10 seconds until cluster is ready and bootstraped...")
+    time.sleep(10)
+    for n in consul_nodes:
+        if n['Server']:
+            node = n['node_client']
+            node.ExecCommand("consul join %s" % join_string)
+            break
+    print("Enabling ACL on all nodes and restarting the servers...")
+    for n in consul_nodes:
+        node = n['node_client']
+        # TODO: Change confiuration file to
+        node.ExecCommand(n['config_hcl_command'].replace(
+            "#@@@ACL_ENABLE@@@", "enabled = true"), True)
+    for n in consul_nodes:
+        node = n['node_client']
+        node.ExecCommand("service consul restart", True)
+    print("Sleeping for another 10 seconds until ACL is ready...")
+    time.sleep(10)
     print("running ACT bootstrap on first server node")
     for n in consul_nodes:
         if n['Server']:

@@ -60,3 +60,35 @@ curl \
 
 
 retry_join = ["172.20.20.11","172.20.20.12","172.20.20.13","172.20.20.14","172.20.20.15"]
+
+
+Create_Consul_Server_Config_File = """
+cat << EOM | sudo tee /etc/consul.d/consul.hcl
+datacenter = "@@@DATACENTER_NAME@@@"
+data_dir = "/opt/consul"
+encrypt = "@@@GOSIP_ENC_KEY@@@"
+ui = @@@CONSUL_UI@@@
+server = @@@IS_SERVER@@@
+@@@BOOTSTRAP@@@
+@@@PERFORMANCE@@@
+@@@RECURSORS@@@
+connect = {
+  enabled = true
+}
+@@@PRIMARY_DATACENTER_NAME@@@
+acl = {
+  enabled = true
+  default_policy = "deny"
+  down_policy = "extend-cache"
+  tokens = {
+      agent_master = "@@@AGENT_MASTER@@@"
+  }
+  
+}
+@@@RETRY_JOIN@@@
+@@@LOG_LEVEL@@@
+enable_syslog = true
+bind_addr = "{{ GetInterfaceIP \\"@@@INTERFACE@@@\\" }}"
+@@@PORTS_CONFIG@@@
+EOM
+"""

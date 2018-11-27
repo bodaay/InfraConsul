@@ -1,77 +1,74 @@
-[
-  {
+[{
     "datacenter_name": "dc1",
-    "gosip_encryption_key": "jZby3xa7LyqqYQODJf/X6w==",
+    "gosip_encryption_key": "R6wC51NeuoR0hV3WRhuVEg==",
     "domain": "consul",
     "datacenter_default_dns_resolvers": [
-      "192.168.100.1"
+        "192.168.100.1"
     ],
-    "consul_nodes": [
-      {
-        "hostname": "consul01",
-        "ssh_port": "22",
-        "UI": true,
-        "Server": true,
-        "LogLevel": "INFO",
-        "DNS_PORT_53": true,
-        "ip_address": "172.20.20.11",
-        "ethernet_interface_name": "enp0s8",
-        "ssh_username": "vagrant",
-        "ssh_password": null,
-        "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul01/virtualbox/private_key"
-      },
-      {
-        "hostname": "consul02",
-        "ssh_port": "22",
-        "UI": true,
-        "Server": true,
-        "LogLevel": "INFO",
-        "DNS_PORT_53": true,
-        "ip_address": "172.20.20.12",
-        "ethernet_interface_name": "enp0s8",
-        "ssh_username": "vagrant",
-        "ssh_password": null,
-        "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul02/virtualbox/private_key"
-      },
-      {
-        "hostname": "consul03",
-        "ssh_port": "22",
-        "UI": true,
-        "DNS_PORT_53": true,
-        "Server": true,
-        "LogLevel": "INFO",
-        "ip_address": "172.20.20.13",
-        "ethernet_interface_name": "enp0s8",
-        "ssh_username": "vagrant",
-        "ssh_password": null,
-        "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul03/virtualbox/private_key"
-      },
-      {
-        "hostname": "consul04",
-        "ssh_port": "22",
-        "UI": true,
-        "DNS_PORT_53": true,
-        "Server": true,
-        "LogLevel": "INFO",
-        "ip_address": "172.20.20.14",
-        "ethernet_interface_name": "enp0s8",
-        "ssh_username": "vagrant",
-        "ssh_password": null,
-        "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul04/virtualbox/private_key"
-      },
-      {
-        "hostname": "consul05",
-        "ssh_port": "22",
-        "UI": true,
-        "DNS_PORT_53": true,
-        "Server": true,
-        "LogLevel": "INFO",
-        "ip_address": "172.20.20.15",
-        "ethernet_interface_name": "enp0s8",
-        "ssh_username": "vagrant",
-        "ssh_password": null,
-        "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul05/virtualbox/private_key"
-      }
+    "consul_nodes": [{
+            "hostname": "consul01",
+            "ssh_port": "22",
+            "UI": true,
+            "Server": true,
+            "LogLevel": "INFO",
+            "DNS_PORT_53": true,
+            "ip_address": "172.20.20.11",
+            "ethernet_interface_name": "enp0s8",
+            "ssh_username": "vagrant",
+            "ssh_password": null,
+            "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul01/virtualbox/private_key"
+        },
+        {
+            "hostname": "consul02",
+            "ssh_port": "22",
+            "UI": true,
+            "Server": true,
+            "LogLevel": "INFO",
+            "DNS_PORT_53": true,
+            "ip_address": "172.20.20.12",
+            "ethernet_interface_name": "enp0s8",
+            "ssh_username": "vagrant",
+            "ssh_password": null,
+            "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul02/virtualbox/private_key"
+        },
+        {
+            "hostname": "consul03",
+            "ssh_port": "22",
+            "UI": true,
+            "DNS_PORT_53": true,
+            "Server": true,
+            "LogLevel": "INFO",
+            "ip_address": "172.20.20.13",
+            "ethernet_interface_name": "enp0s8",
+            "ssh_username": "vagrant",
+            "ssh_password": null,
+            "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul03/virtualbox/private_key"
+        },
+        {
+            "hostname": "consul04",
+            "ssh_port": "22",
+            "UI": true,
+            "DNS_PORT_53": true,
+            "Server": true,
+            "LogLevel": "INFO",
+            "ip_address": "172.20.20.14",
+            "ethernet_interface_name": "enp0s8",
+            "ssh_username": "vagrant",
+            "ssh_password": null,
+            "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul04/virtualbox/private_key"
+        },
+        {
+            "hostname": "consul05",
+            "ssh_port": "22",
+            "UI": true,
+            "DNS_PORT_53": true,
+            "Server": true,
+            "LogLevel": "INFO",
+            "ip_address": "172.20.20.15",
+            "ethernet_interface_name": "enp0s8",
+            "ssh_username": "vagrant",
+            "ssh_password": null,
+            "ssh_keyfile": "/home/khalefa/Github/InfraConsul/.vagrant/machines/consul05/virtualbox/private_key"
+        }
     ]
-  }
-]
+}]
