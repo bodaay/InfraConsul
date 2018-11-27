@@ -54,6 +54,9 @@ acl = {
   }
   
 }
+addresses = {
+   http = "0.0.0.0"
+}
 
 @@@LOG_LEVEL@@@
 enable_syslog = true
