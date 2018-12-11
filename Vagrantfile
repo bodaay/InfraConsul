@@ -34,7 +34,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = DEMO_BOX_NAME
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "1024"
+    vb.memory = "512"
     vb.cpus = "2"
   end
   config.vm.define "consul01" do |consul01|
@@ -116,7 +116,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.define "vault03" do |vault03|
-    vault03.vm.hostname = "n8"
+    vault03.vm.hostname = "vault03"
     # Forward Vault web and api port 8200
     vault03.vm.network "forwarded_port", guest: 8200, host: 8218
     # n8.ssh.username = "root"
@@ -124,5 +124,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # n8.ssh.keys_only = false
     # n8.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
     vault03.vm.network "private_network", ip: "172.20.20.18"
+  end
+  config.vm.define "samba01" do |samba01|
+    samba01.vm.hostname = "samba01"
+    # Forward Vault web and api port 8200
+    samba01.vm.network "forwarded_port", guest: 8500, host: 8516
+    # n8.ssh.username = "root"
+    # n8.ssh.password = "P@ssw0rd"
+    # n8.ssh.keys_only = false
+    # n8.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
+    samba01.vm.network "private_network", ip: "172.20.20.19"
+  end
+  config.vm.define "samba02" do |samba02|
+    samba02.vm.hostname = "samba02"
+    # Forward Vault web and api port 8200
+    samba02.vm.network "forwarded_port", guest: 8500, host: 8517
+    # n8.ssh.username = "root"
+    # n8.ssh.password = "P@ssw0rd"
+    # n8.ssh.keys_only = false
+    # n8.vm.provision "shell", inline: $script, env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
+    samba02.vm.network "private_network", ip: "172.20.20.20"
   end
 end

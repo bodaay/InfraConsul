@@ -1,6 +1,6 @@
 #!/bin/bash
-VAULT_VERSION="0.11.5"
-#sudo apt-get install -y unzip curl jq
+VAULT_VERSION="1.0.0"
+sudo apt-get install -y unzip curl jq
 echo "Determining Consul version to install ..."
 CHECKPOINT_URL="https://checkpoint-api.hashicorp.com/v1/check"
 if [ -z "$CONSUL_DEMO_VERSION" ]; then
