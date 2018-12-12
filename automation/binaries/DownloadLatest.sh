@@ -17,3 +17,7 @@ curl -s https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERS
 unzip -f vault.zip
 chmod +x vault
 rm vault.zip
+# CFSSL
+go get -u github.com/cloudflare/cfssl/cmd/cfssl
+cp $HOME/go/bin/cfssl ./
+chmod +x cfssl
